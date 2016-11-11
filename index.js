@@ -1,3 +1,5 @@
+var Challenge = require('ledgerloops-challenge');
+
 // in-neighbor        in-peer       out-peer  out-neighbor
 //[WE REJECT:]
 //      -> cond-prom ->
