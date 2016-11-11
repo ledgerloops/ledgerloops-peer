@@ -1,0 +1,32 @@
+{
+  "name": "ledgerloops-peer",
+  "version": "0.0.1",
+  "description": "Business logic for communicating with a LedgerLoops peer",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "randomstring": "^1.1.5"
+  },
+  "devDependencies": {
+    "jshint": "^2.9.4",
+    "mocha": "^3.1.2",
+    "sinon": "^1.17.6"
+  },
+  "scripts": {
+    "jshint": "./node_modules/.bin/jshint *.js test/*.js",
+    "mocha": "./node_modules/.bin/mocha test/",
+    "test": "./node_modules/.bin/jshint *.js test/*.js && ./node_modules/.bin/mocha test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ledgerloops/ledgerloops-peer.git"
+  },
+  "author": "Michiel de Jong",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ledgerloops/ledgerloops-peer/issues"
+  },
+  "homepage": "https://github.com/ledgerloops/ledgerloops-peer#readme"
+}
