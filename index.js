@@ -40,8 +40,9 @@ var Challenge = require('ledgerloops-challenge');
 //       <- satis-con <-
 
 
-function Peer(nick, sendToExternal, sendToRouting, updateNeighborStatus) {
-  this._peerNick = nick;
+function Peer(myNick, theirNick, sendToExternal, sendToRouting, updateNeighborStatus) {
+  this._myNick = myNick;
+  this._theirNick = theirNick;
   this._sendToExternal = sendToExternal;
   this._sendToRouting = sendToRouting;
   this._updateNeighborStatus = updateNeighborStatus;
