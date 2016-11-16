@@ -45,7 +45,10 @@ function Peer(myNick, theirNick, sendToExternal, sendToRouting, updateNeighborSt
   this._theirNick = theirNick;
   this._sendToExternal = sendToExternal;
   this._sendToRouting = sendToRouting;
-  this._updateNeighborStatus = updateNeighborStatus;
+  this._neighborDirection = 'quits';
+  this._updateNeighborStatus = function() {
+    updateNeighborStatus(theirNick, this._neighborDirection, sendToExternal);
+  };
   this._ledger = []; // list of transactions
   this._conditionalPromises = {
     rcvd: {}, // received a conditional promise, key is transactionId
@@ -73,6 +76,8 @@ Peer.prototype._handleInitiateUpdate = function(msgObj) {
     msgType: 'confirm-update',
     hash: msgObj.hash,
   });
+  this._neighborDirection = 'in';
+  this._updateNeighborStatus();
 };
 
 Peer.prototype._handleConfirmUpdate = function(msgObj) {
@@ -82,6 +87,8 @@ Peer.prototype._handleConfirmUpdate = function(msgObj) {
   }
   this._ledger.push(this._updatesInitiated[msgObj.hash]);
   delete this._updatesInitiated[msgObj.hash];
+  this._neighborDIrection = 'out';
+  this._updateNeighborStatus();
 };
 
 Peer.prototype._handleConditionalPromise = function(msgObj) {
@@ -144,7 +151,15 @@ Peer.prototype.handleIncomingMessage = function(msgObj) {
     // break;
   case 'update-status':
   case 'probe':
-    return this._sendToRouting(msgObj); // to routing
+    if (this._neighborDirection === 'quits') {
+      console.log('sendToRouting', this, msgObj);
+      throw new Error('routing-related message from quits neighbor!');
+    }
+    return this._sendToRouting({
+      type: 'incoming',
+      peerNick: this._theirNick,
+      direction: this._neighborDirection,
+    }, msgObj); // to routing
     // break;
   case 'conditional-promise':
     return this._handleConditionalPromise(msgObj); // to ledger, wait 100ms, then passes challenge to internal-loop-peer
@@ -159,7 +174,7 @@ Peer.prototype.handleIncomingMessage = function(msgObj) {
     return this._handleReject(msgObj); // to internal-loop-peer
     // break;
   default:
-    throw new Error(`Unknown msgType ${msgType}"`);
+    throw new Error(`Unknown msgType ${msgObj.msgType}"`);
   }
 };
 
