@@ -1,7 +1,7 @@
 {
   "name": "ledgerloops-peer",
-  "version": "0.0.1",
-  "description": "Business logic for communicating with a LedgerLoops peer",
+  "version": "0.0.2",
+  "description": "https://ledgerloops.com - Business logic for communicating with a LedgerLoops peer",
   "main": "index.js",
   "directories": {
     "test": "test"

@@ -40,11 +40,11 @@ var Challenge = require('ledgerloops-challenge');
 //       <- satis-con <-
 
 
-function Peer(nick, sendToExternal, sendToRouting, updateDebtStatus) {
+function Peer(nick, sendToExternal, sendToRouting, updateNeighborStatus) {
   this._peerNick = nick;
   this._sendToExternal = sendToExternal;
   this._sendToRouting = sendToRouting;
-  this._updateDebtStatus = updateDebtStatus;
+  this._updateNeighborStatus = updateNeighborStatus;
   this._ledger = []; // list of transactions
   this._conditionalPromises = {
     rcvd: {}, // received a conditional promise, key is transactionId
