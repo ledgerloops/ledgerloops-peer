@@ -59,7 +59,7 @@ function checkHash() {
 }
 
 Peer.prototype._handleInitiateUpdate = function(msgObj) {
-  if (msgObj.previousHash != this._ledger[this._ledger.length-1].hash) {
+  if (msgObj.previousHash != this._getPreviousHash()) {
     // reject it!
     return;
   }
@@ -68,7 +68,7 @@ Peer.prototype._handleInitiateUpdate = function(msgObj) {
     return;
   }
   this._ledger.push(msgObj);
-  this._sendMsg({
+  this._sendToExternal({
     msgType: 'confirm-update',
     hash: msgObj.hash,
   });
@@ -109,7 +109,7 @@ Peer.prototype._handleSatisfyCondition = function(msgObj) {
   condProm.previousHash = this._ledger[this._ledger.length].hash;
   condProm.hash = calcHash(condProm);
   this._ledger.push(condProm);
-  this._sendMsg({
+  this._sendToExternal({
     type: 'confirm-update',
     hash: condProm.hash,
   });
@@ -121,7 +121,7 @@ Peer.prototype._handlePleaseReject = function(msgObj) {
     this._sendToRouting(msgObj.routing, 'pls-rej');
   } else {
     delete this._conditionalPromise.rcvd[msgObj.assetId];
-    this._sendMsg({
+    this._sendToExternal({
       type: 'reject',
       assetId: msgObj.assetId
     });
@@ -160,6 +160,31 @@ Peer.prototype.handleIncomingMessage = function(msgObj) {
   default:
     throw new Error(`Unknown msgType ${msgType}"`);
   }
+};
+
+function hash(obj) {
+  return 'some-hash';
+};
+
+Peer.prototype._getPreviousHash = function() {
+  if (this._ledger.length ===0) {
+    return null;
+  }
+  return this._ledger[this._ledger.length-1].hash;
+};
+
+Peer.prototype.sendIOU = function(note, addedDebts) {
+  var msgObj = {
+    previousHash: this._getPreviousHash(),
+    protocol: 'local-ledgers-0.3',
+    msgType: 'initiate-update',
+    note,
+    debtor: this._myNick,
+    addedDebts,
+  };
+  msgObj.hash = hash(msgObj);
+  this._ledger.push(msgObj);
+  this._sendToExternal(msgObj);
 };
 
 module.exports = Peer;
